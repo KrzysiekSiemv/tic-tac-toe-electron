@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kółko i krzyżyk</title>
+    <style>
+        #root {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            font-family: 'Courier New', Courier, monospace;
+            gap: 12px;
+        }
+
+        #game {
+            display: grid;
+            grid-template-columns: 200px 200px 200px;
+            grid-template-rows: 200px 200px 200px;
+            grid-gap: 4px;
+            background-color: black;
+            width: auto;
+        }
+
+        #stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .box {
+            background-color: white;
+            font-size: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div id="info">
+            <h3><span id="kto_gra">Kółko</span></h3>
+        </div>
+        <div id="game">
+            <div id="box1" class="box" set=""></div>
+            <div id="box2" class="box" set=""></div>
+            <div id="box3" class="box" set=""></div>
+            <div id="box4" class="box" set=""></div>
+            <div id="box5" class="box" set=""></div>
+            <div id="box6" class="box" set=""></div>
+            <div id="box7" class="box" set=""></div>
+            <div id="box8" class="box" set=""></div>
+            <div id="box9" class="box" set=""></div>
+        </div>
+        <div id="stats">
+            <h3>Kółko: <span id="wynik_kolko">0</span></h3>
+            <h3>Remis: <span id="wynik_remis">0</span></h3>
+            <h3>Krzyżyk: <span id="wynik_krzyzyk">0</span></h3>
+        </div>
+    </div>
+    <script>
+        let who_plays = Math.ceil(Math.random() * 10) % 2 == 0 ? 'Kółko' : 'Krzyżyk';
+        let who_won = "";
+        let can_play = true;
+        let boxes = document.querySelectorAll(".box");
+        let score_o = 0;
+        let score_x = 0;
+        let score_remis = 0;
+        let left = 9;
+
+        let show_who_plays = document.getElementById("kto_gra");
+        show_who_plays.innerHTML = `Obecnie gra: ${who_plays}`;
+
+        Array.from(boxes).forEach(el => {
+            el.addEventListener("click", (e) => {
+                if(can_play){
+                    if(el.set == undefined){
+                        if(who_plays == 'Kółko'){
+                            el.set = "o";
+                            el.innerHTML = "o";
+                            who_plays = "Krzyżyk";
+                        } else {
+                            el.set = "x";
+                            el.innerHTML = "x";
+                            who_plays = "Kółko";
+                        }
+                        show_who_plays.innerHTML = who_plays;
+                        left--;
+                        checkIfWin();
+                    }
+                }
+            });
+        });
+
+        function resetGame(){
+            who_plays = who_won == "Kółko" ? "Krzyżyk" : "Kółko";
+            show_who_plays.innerHTML = `Obecnie gra: ${who_plays}`;
+            Array.from(boxes).forEach(el => {
+                el.innerHTML = "";
+                el.set = undefined;
+            });
+            can_play = true;
+            who_won = "";
+            left = 9;
+        }
+
+        function checkIfWin(){
+            let win_places = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            // 0 1 2
+            // 3 4 5
+            // 6 7 8
+            win_places.forEach(place => {
+                let x = 0;
+                let o = 0;
+                place.forEach(set => {
+                    if(boxes[set].set == 'o'){
+                        o++;
+                    } else if(boxes[set].set == 'x'){
+                        x++;
+                    }
+                })
+
+                if(x == 3){
+                    show_who_plays.innerHTML = "Wygrywa Krzyżyk";
+                    score_x++;
+
+                    document.getElementById("wynik_krzyzyk").innerHTML = score_x;
+                    can_play = false;
+                    setTimeout(() => {
+                        resetGame()
+                    }, 5000);
+                    return 'x';
+                }
+                else if(o == 3) {
+                    show_who_plays.innerHTML = "Wygrywa Kółko!";
+                    score_o++;
+                    document.getElementById("wynik_kolko").innerHTML = score_o;
+
+                    can_play = false;
+                    setTimeout(() => {
+                        resetGame()
+                    }, 5000);
+                    return 'o';
+                }
+            });
+
+            if(left == 0 && who_won == ""){
+                show_who_plays.innerHTML = "Remis!";
+                score_remis++;
+                document.getElementById("wynik_remis").innerHTML = score_remis;
+                return 'remis';
+            }
+
+            return false;
+        }
+    </script>
+</body>
+</html>
