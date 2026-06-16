@@ -5,3 +5,6 @@ Jest to aplikacja napisana z nudów w 20 minut w czystym HTML + CSS + JS i stwor
 ## Uruchomienie aplikacji
 
 Aby uruchomić projekt wystarczy go sklonować, uruchomić komendę `npm i` i odpalić przy pomocy `npm start`.
+
+Wygląd (nie powala, wiem)
+![zrzut ekranu projektu](image.png)
